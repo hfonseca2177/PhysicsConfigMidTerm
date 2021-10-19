@@ -1,0 +1,15 @@
+{
+	"configuration":
+	{
+		"pitch":
+		{
+			"min": 1.0,
+			"max": 2.0
+		},
+		"yaw":
+		{
+			"min": 3.0,
+			"max": 4.0
+		}
+	}
+}

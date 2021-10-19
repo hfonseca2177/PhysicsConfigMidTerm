@@ -1,0 +1,89 @@
+{
+	"configuration":
+	{
+		"bulletPreset":
+		{
+			"mass": 1.0,
+			"damping": 1.0,
+			"size": 1.0,
+			"timeLimit": 0.0,
+			"distanceLimit": 0.0,
+			"muzzleVelocity":
+			{
+				"x":1.0,
+				"y":1.0,
+				"z":1.0
+			},
+			"color":
+			{
+				"r":1.0,
+				"g":0.0,
+				"b":0.0
+			},
+			"meshName":""
+		},
+		"laserPreset":
+		{
+			"mass": 1.0,
+			"damping": 1.0,
+			"size": 1.0,
+			"timeLimit": 0.0,
+			"distanceLimit": 0.0,
+			"muzzleVelocity":
+			{
+				"x":1.0,
+				"y":1.0,
+				"z":1.0
+			},
+			"color":
+			{
+				"r":1.0,
+				"g":0.0,
+				"b":0.0
+			},
+			"meshName":""
+		},
+		"cannonBallPreset":
+		{
+			"mass": 1.0,
+			"damping": 1.0,
+			"size": 1.0,
+			"timeLimit": 0.0,
+			"distanceLimit": 0.0,
+			"muzzleVelocity":
+			{
+				"x":1.0,
+				"y":1.0,
+				"z":1.0
+			},
+			"color":
+			{
+				"r":1.0,
+				"g":0.0,
+				"b":0.0
+			},
+			"meshName":""
+		},
+		"energyBallPreset":
+		{
+			"mass": 1.0,
+			"damping": 1.0,
+			"size": 1.0,
+			"timeLimit": 0.0,
+			"distanceLimit": 0.0,
+			"muzzleVelocity":
+			{
+				"x":1.0,
+				"y":1.0,
+				"z":1.0
+			},
+			"color":
+			{
+				"r":1.0,
+				"g":0.0,
+				"b":0.0
+			},
+			"meshName":""
+		}
+	}
+}
