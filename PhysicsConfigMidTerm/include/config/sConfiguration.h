@@ -14,7 +14,7 @@ namespace config
 		float distanceLimit;
 		glm::vec3 muzzleVelocity;
 		glm::vec3 color;
-		std::string meshName;
+		std::string textureName;
 	};
 
 	//Preset configuration for cannon functionality

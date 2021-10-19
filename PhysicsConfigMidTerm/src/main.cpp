@@ -12,7 +12,7 @@
 #include <scene/cProjectile.h>
 #include <config/cConfigurationManager.h>
 #include <cannon/cCannonManager.h>
-#include <projectile/cBaseProjectile.h>
+
 
 
 
@@ -140,39 +140,46 @@ int main()
 }
 
 //Default particle Setup
-//void InitProject1Variables(glm::mat3& axes, nPhysics::cParticle* particle)
-//{
-//	axes = orthonormalBasis(getRandomXVector(), getRandomZVector());
-//	// because our "sphere" has a radius of 1
-//	glm::vec3 position(0.0, 1.1f, 0.0);
-//	glm::vec3 velocity = (axes[0] * getRandom(-2.f, 2.f)) + (axes[1] * 5.f) + (axes[2] * getRandom(-2.f, 2.f));
-//	velocity = glm::normalize(velocity);
-//	velocity *= 50.f;
-//	particle->SetPosition(position);
-//	particle->SetVelocity(velocity);
-//}
-
-//Bind projectile particle to the world manager
-void AddProjectileToWorld(nPhysics::cParticle* projectile, nPhysics::cParticleGravityGenerator& gravityGenerator,
-	nPhysics::cParticleWorld* world, cannon::cCannonManager& cannonManager)
+void InitProject1Variables(glm::mat3& axes, nPhysics::cParticle* particle)
 {
-	projectile = cannonManager.SpawnProjectile();
-
-	world->AddParticle(projectile);
-	
-	world->GetForceRegistry()->Register(projectile, &gravityGenerator);
+	axes = orthonormalBasis(getRandomXVector(), getRandomZVector());
+	// because our "sphere" has a radius of 1
+	glm::vec3 position(0.0, 1.1f, 0.0);
+	glm::vec3 velocity = (axes[0] * getRandom(-2.f, 2.f)) + (axes[1] * 5.f) + (axes[2] * getRandom(-2.f, 2.f));
+	velocity = glm::normalize(velocity);
+	velocity *= 50.f;
+	particle->SetPosition(position);
+	particle->SetVelocity(velocity);
 }
 
-// Clean Projectile from world
-void CleanProjectile(nPhysics::cParticle* projectile, nPhysics::cParticleWorld* world)
+
+//Bind praticles to the world manager
+void InitWorld(std::vector<nPhysics::cParticle*>& particles, nPhysics::cParticleGravityGenerator& gravityGenerator,
+	nPhysics::cParticleWorld* world, cannon::cCannonManager& cannonManager)
+{
+	for (int idx = 0; idx < 1; idx++)
+	{
+		nPhysics::cParticle* particle = cannonManager.SpawnProjectile();
+
+		if (world->AddParticle(particle))
+		{
+			std::cout << "Hurray!" << std::endl;
+		}
+		world->GetForceRegistry()->Register(particle, &gravityGenerator);
+		particles.push_back(particle);
+	}
+}
+
+// Clean Partivles from world
+void CleanParticles(std::vector<nPhysics::cParticle*>& particles, nPhysics::cParticleWorld* world)
 {
 	// clean up!
-	if (projectile != nullptr)
+	for (nPhysics::cParticle* p : particles)
 	{
-		world->RemoveParticle(projectile);
-		delete projectile;
+		world->RemoveParticle(p);
+		delete p;
 	}
-	
+	particles.clear();
 }
 
 //Main program
@@ -194,18 +201,30 @@ void mainLoop()
 
 	//Shuriken fireworks manager instance
 	cannon::cCannonManager cannonManager = cannon::cCannonManager(configManager->GetCannonConfiguration(), configManager->GetProjectileConfiguration());
+	cannonManager.SetProjectileType(cannon::BULLET);
 
 	nPhysics::cParticleGravityGenerator gravityGenerator(glm::vec3(0.0f, -9.81f, 0.0f));
 
-	//InitWorld(particles, gravityGenerator, world, cannonManager);
-	glm::vec3 initialPosition = glm::vec3(0.0f);
-	nPhysics::cParticle* projectile = new nPhysics::cParticle(0.0f, initialPosition);
+	std::vector<nPhysics::cParticle*> particles;
 
+	InitWorld(particles, gravityGenerator, world, cannonManager);
+
+	nPhysics::cParticle* particle = particles[0];
+
+	glm::vec3 initialPosition = glm::vec3(0.0f);
+	//nPhysics::cParticle* projectile = new nPhysics::cParticle(1.0f, initialPosition);
+	
 	glm::mat3 axes;
+
 	float timeElapsed = 0;
 
 	bool projectileIsAlive = false;
-	
+
+	//Default particles settings
+	for (nPhysics::cParticle* p : particles)
+	{
+		InitProject1Variables(axes, p);
+	}
 
 	//cannon controls
 	nInput::cKey* oneLeft = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_LEFT);
@@ -218,8 +237,8 @@ void mainLoop()
 	nInput::cKey* twoKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_2);
 	nInput::cKey* threeKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_3);
 	nInput::cKey* fourKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_4);
-
 	
+	bool particlesChanged = false;
 
 	while (continueMainLoop)
 	{
@@ -252,51 +271,75 @@ void mainLoop()
 			{
 				std::cout << "ONE PRESSED - BULLET" << std::endl;
 				cannonManager.SetProjectileType(cannon::BULLET);
-				CleanProjectile(projectile, world);
-				AddProjectileToWorld(projectile, gravityGenerator, world, cannonManager);
-				cannonManager.ShootBullet(axes, projectile);
+				if (particlesChanged)
+				{
+					CleanParticles(particles, world);
+					InitWorld(particles, gravityGenerator, world, cannonManager);
+					particle = particles[0];
+				}
+				else {
+					particlesChanged = true;
+				}
+				for (nPhysics::cParticle* p : particles)
+				{
+					cannonManager.ShootBullet(axes, p);
+				}
 				projectileIsAlive = true;
 			}
 			//Fire laser
 			else if (twoKey->IsJustPressed()) {
-				
+				particlesChanged = true;
 				std::cout << "TWO PRESSED - LASER" << std::endl;
+
 				cannonManager.SetProjectileType(cannon::LASER);
-				CleanProjectile(projectile, world);
-				AddProjectileToWorld(projectile, gravityGenerator, world, cannonManager);
-				cannonManager.ShootLaser(axes, projectile);
+				CleanParticles(particles, world);
+				InitWorld(particles, gravityGenerator, world, cannonManager);
+				particle = particles[0];
+				for (nPhysics::cParticle* p : particles)
+				{
+					cannonManager.ShootLaser(axes, p);
+				}
 				projectileIsAlive = true;
 			}
 			//Fire cannon ball
 			else if (threeKey->IsJustPressed()) {
+				particlesChanged = true;
 				std::cout << "Three PRESSED - CANNON BALL" << std::endl;
 				cannonManager.SetProjectileType(cannon::BALL);
-				CleanProjectile(projectile, world);
-				AddProjectileToWorld(projectile, gravityGenerator, world, cannonManager);
-				cannonManager.ShootLaser(axes, projectile);
+				CleanParticles(particles, world);
+				InitWorld(particles, gravityGenerator, world, cannonManager);
+				particle = particles[0];
+				for (nPhysics::cParticle* p : particles)
+				{
+					cannonManager.ShootBall(axes, p);
+				}
 				projectileIsAlive = true;
 			}
 			//Replace normal particles for the Shuriken Zeta ones
 			else if (fourKey->IsJustPressed()) {
 				std::cout << "THREE PRESSED - ENERGY BALL" << std::endl;
 				cannonManager.SetProjectileType(cannon::ENERGY);
-				CleanProjectile(projectile, world);
-				AddProjectileToWorld(projectile, gravityGenerator, world, cannonManager);
-				cannonManager.ShootEnergy(axes, projectile);
+				CleanParticles(particles, world);
+				InitWorld(particles, gravityGenerator, world, cannonManager);
+				particle = particles[0];
+				for (nPhysics::cParticle* p : particles)
+				{
+					cannonManager.ShootEnergy(axes, p);
+				}
 				projectileIsAlive = true;
 			}
 		}
-		glm::vec3 position = projectile->GetPosition();
-		glm::vec3 velocity = projectile->GetVelocity();
+		glm::vec3 position = particle->GetPosition();
+		glm::vec3 velocity = particle->GetVelocity();
 
 		if (projectileIsAlive)
 		{
-			if(dynamic_cast<projectile::cBaseProjectile*>(projectile)->ReachedTimeout(timeElapsed))
+			if(cannonManager.ReachedTimeout(timeElapsed, particle))
 			{
 				std::cout << "Projectile Timeout after " << timeElapsed << " seconds with a velocity x=" << velocity.x << "\ty=" << velocity.y << "\tz=" << velocity.z << std::endl;
 				projectileIsAlive = false;
 			}
-			else if (dynamic_cast<projectile::cBaseProjectile*>(projectile)->ReachedDistanceLimit(initialPosition, position))
+			else if (cannonManager.ReachedDistanceLimit(initialPosition, position, particle))
 			{
 				std::cout << "Projectile reached a distant limit after " << timeElapsed << " seconds with a velocity x=" << velocity.x << "\ty=" << velocity.y << "\tz=" << velocity.z << std::endl;
 				projectileIsAlive = false;
@@ -306,12 +349,12 @@ void mainLoop()
 				if (particleIsMovingUpward(axes, deltaTime, timeElapsed, position, velocity))
 				{
 					// Let the user know the particle is moving up.
-					//std::cout << "going up! \tx=" << position.x << "\ty=" << position.y << "\tz=" << position.z << std::endl;
+					std::cout << "going up! \tx=" << position.x << "\ty=" << position.y << "\tz=" << position.z << std::endl;
 				}
 				else
 				{
 					// Let the user know the particle is moving down.
-					//std::cout << "going down! \tx=" << position.x << "\ty=" << position.y << "\tz=" << position.z << std::endl;
+					std::cout << "going down! \tx=" << position.x << "\ty=" << position.y << "\tz=" << position.z << std::endl;
 				}
 				
 				world->TimeStep(deltaTime);
@@ -351,10 +394,17 @@ void mainLoop()
 		platformGraphics->Render();
 		cannonGraphics->Render();
 		// render the projectile
-		projectile->GetPosition(position);
-		projectilesGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
-		projectilesGraphics->Render();
-		
+
+		for (nPhysics::cParticle* p : particles)
+		{
+			p->GetPosition(position);
+			projectilesGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
+			//projectilesGraphics->GetVars()->ModelMatrix = glm::scale(projectilesGraphics->GetVars()->ModelMatrix, glm::vec3(3.0f, 3.0f, 3.0f));
+			//projectilesGraphics->GetVars()->TexDiffuse = nGraphics::gTextureManager->GetTextureByName("box");
+			cannonManager.ApplyVisual(projectilesGraphics);
+			projectilesGraphics->Render();
+		}
+
 		// end per-item rendering
 
 		nGraphics::EndFrame();
@@ -367,8 +417,8 @@ void mainLoop()
 	}
 
 	//// clean up!
-	CleanProjectile(projectile, world);
-	projectile = 0;
+	CleanParticles(particles, world);
+	particle = 0;
 	delete world;
 }
 

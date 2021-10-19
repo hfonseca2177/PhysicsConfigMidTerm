@@ -16,8 +16,8 @@ namespace scene
 		graphicsDefinition.Mesh = meshName;
 		graphicsDefinition.TexDiffuse = graphicAssets.name;
 		glm::set(graphicsDefinition.ModelColor, 1.0f, 1.0f, 1.0f, 1.0f);
-		glm::set(graphicsDefinition.Position, 0.0f, -0.2f, 0.0f);
-		glm::set(graphicsDefinition.Scale, 1.0f, 1.0f, 1.0f);
+		glm::set(graphicsDefinition.Position, 0.0f, -5.5f, 0.0f);
+		glm::set(graphicsDefinition.Scale, 5.0f, 1.0f, 5.0f);
 
 	}
 	cPlatform::~cPlatform()
@@ -28,7 +28,7 @@ namespace scene
 	{
 		loadingInfo.File = "../Assets/box.obj";
 		loadingInfo.DoResize = true;
-		loadingInfo.Extents = glm::vec3(12.f, 12.f, 12.f);
+		loadingInfo.Extents = glm::vec3(2.f, 2.f, 2.f);
 		loadingInfo.SubMeshes[0].Name = meshName;
 	}
 

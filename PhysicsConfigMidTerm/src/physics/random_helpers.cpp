@@ -36,24 +36,7 @@ namespace nPhysics
 
 	glm::mat3 getRandomOrthonormalBasis()
 	{
-		//       The input vectors may be manipulated, however the 
-		//       returned axes must essentially be:
-		//       x-axis: sourced from xVec
-		//       y-axis: generated using math!
-		//       z-axis: sourced from zVec
-
-		// Generate y, by crossing z and x.
-		glm::vec3 x(getRandomXVector());
-		glm::vec3 z(getRandomZVector());
-		glm::vec3 y(glm::cross(z, x));
-		// Ensure z is orthogonal to both x and y.
-		z = glm::cross(x, y);
-		// Normalize everything.
-		x = glm::normalize(x);
-		y = glm::normalize(y);
-		z = glm::normalize(z);
-		// Return the result.
-		return glm::mat3(x, y, z);
+		return orthonormalBasisWithParams(getRandomXVector(), getRandomZVector());
 	}
 
 	// Use as-is.  Do not change.
@@ -66,5 +49,28 @@ namespace nPhysics
 	glm::vec3 getRandomZVector()
 	{
 		return glm::vec3(-getRandom(0.1f, 1.f), 0.f, getRandom(0.1f, 1.f));
+	}
+
+	glm::mat3 orthonormalBasisWithParams(const glm::vec3& xVec, const glm::vec3& zVec)
+	{
+		// TODO: Generate an orthonormal basis, using xVec and zVec.
+		//       The input vectors may be manipulated, however the 
+		//       returned axes must essentially be:
+		//       x-axis: sourced from xVec
+		//       y-axis: generated using math!
+		//       z-axis: sourced from zVec
+
+		// Generate y, by crossing z and x.
+		glm::vec3 x(xVec);
+		glm::vec3 z(zVec);
+		glm::vec3 y(glm::cross(z, x));
+		// Ensure z is orthogonal to both x and y.
+		z = glm::cross(x, y);
+		// Normalize everything.
+		x = glm::normalize(x);
+		y = glm::normalize(y);
+		z = glm::normalize(z);
+		// Return the result.
+		return glm::mat3(x, y, z);
 	}
 }

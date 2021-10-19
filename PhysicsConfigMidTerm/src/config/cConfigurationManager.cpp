@@ -26,7 +26,7 @@ void ReadProjectilePreset(config::sProjectilePreset& projectileConf, Value& pres
 	projectileConf.color.r = preset["color"]["r"].GetFloat();
 	projectileConf.color.g = preset["color"]["g"].GetFloat();
 	projectileConf.color.b = preset["color"]["b"].GetFloat();
-	projectileConf.meshName = preset["meshName"].GetString();
+	projectileConf.textureName = preset["textureName"].GetString();
 }
 
 void config::cConfigurationManager::LoadProjectileConfig()
@@ -35,9 +35,9 @@ void config::cConfigurationManager::LoadProjectileConfig()
 	this->projectileConfig = config::sProjectileConfiguration();
 	Value& conf = configFile["configuration"];
 	ReadProjectilePreset(this->projectileConfig.bulletPreset, conf["bulletPreset"]);
-	ReadProjectilePreset(this->projectileConfig.bulletPreset, conf["laserPreset"]);
-	ReadProjectilePreset(this->projectileConfig.bulletPreset, conf["cannonBallPreset"]);
-	ReadProjectilePreset(this->projectileConfig.bulletPreset, conf["energyBallPreset"]);
+	ReadProjectilePreset(this->projectileConfig.laserPreset, conf["laserPreset"]);
+	ReadProjectilePreset(this->projectileConfig.cannonBallPreset, conf["cannonBallPreset"]);
+	ReadProjectilePreset(this->projectileConfig.energyBallPreset, conf["energyBallPreset"]);
 }
 
 void config::cConfigurationManager::LoadCannonConfig()

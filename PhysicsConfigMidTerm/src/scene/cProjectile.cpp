@@ -10,13 +10,16 @@ namespace scene
 	cProjectile::cProjectile()
 	{
 		//Define the graphic assets
-		this->graphicAssets = nGraphics::sGraphic("bullet", "../Assets/PerforatedMetalPlate.bmp");
-
+		this->graphicAssets[0] = nGraphics::sGraphic("bulletTxt", "../Assets/bulletTxt.jpg");
+		this->graphicAssets[1] = nGraphics::sGraphic("laserTxt", "../Assets/laserTxt.jpg");
+		this->graphicAssets[2] = nGraphics::sGraphic("cannonTxt", "../Assets/cannonTxt.jpg");
+		this->graphicAssets[3] = nGraphics::sGraphic("energyTxt", "../Assets/energyTxt.jpg");
+		
 		//Set graphic definition
 		this->graphicsDefinition.Mesh = meshName;
-		//this->graphicsDefinition.TexDiffuse = graphicAssets.name;
-		glm::set(this->graphicsDefinition.ModelColor, 1.0f, 1.0f, 1.0f, 1.0f);
-		glm::set(this->graphicsDefinition.Position, 0.0f, 1.0f, 0.0f);
+		//this->graphicsDefinition.TexDiffuse = graphicAssets[0].name;
+		glm::set(this->graphicsDefinition.ModelColor, 1.0f, 0.0f, 0.0f, 1.0f);
+		glm::set(this->graphicsDefinition.Position, 0.0f, 2.0f, 0.0f);
 		glm::set(this->graphicsDefinition.Scale, 1.0f, 1.0f, 1.0f);
 	}
 	cProjectile::~cProjectile()
@@ -35,7 +38,10 @@ namespace scene
 	}
 	void cProjectile::SendToTextureManager()
 	{
-		nGraphics::gTextureManager->LoadSimple(this->graphicAssets);
+		for (size_t i = 0; i < 4; i++)
+		{
+			nGraphics::gTextureManager->LoadSimple(this->graphicAssets[i]);
+		}
 	}
 
 }

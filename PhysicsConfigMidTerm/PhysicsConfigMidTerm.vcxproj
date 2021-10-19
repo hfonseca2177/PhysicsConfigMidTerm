@@ -28,7 +28,6 @@
     <ClInclude Include="include\projectile\cBulletProjectile.h" />
     <ClInclude Include="include\projectile\cLaserProjectile.h" />
     <ClInclude Include="include\projectile\cEnergyProjectile.h" />
-    <ClInclude Include="include\projectile\cBaseProjectile.h" />
     <ClInclude Include="include\scene\cClearSky.h" />
     <ClInclude Include="include\scene\cCannon.h" />
     <ClInclude Include="include\scene\cPlatform.h" />
@@ -78,7 +77,6 @@
     <ClCompile Include="src\projectile\cBulletProjectile.cpp" />
     <ClCompile Include="src\projectile\cLaserProjectile.cpp" />
     <ClCompile Include="src\projectile\cEnergyProjectile.cpp" />
-    <ClCompile Include="src\projectile\cBaseProjectile.cpp" />
     <ClCompile Include="src\scene\cClearSky.cpp" />
     <ClCompile Include="src\scene\cCannon.cpp" />
     <ClCompile Include="src\scene\cPlatform.cpp" />

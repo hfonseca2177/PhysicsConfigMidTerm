@@ -10,7 +10,7 @@ namespace scene
 	class cProjectile
 	{
 	private:
-		nGraphics::sGraphic graphicAssets;
+		nGraphics::sGraphic graphicAssets[4];
 		nGraphics::sGraphicsComponentDef graphicsDefinition;
 	public:
 		cProjectile();

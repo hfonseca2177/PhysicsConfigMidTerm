@@ -16,8 +16,9 @@ namespace scene
 		this->graphicsDefinition.Mesh = meshName;
 		this->graphicsDefinition.TexDiffuse = graphicAssets.name;
 		glm::set(this->graphicsDefinition.ModelColor, 1.0f, 1.0f, 1.0f, 1.0f);
-		glm::set(this->graphicsDefinition.Position, 0.0f, 1.0f, 0.0f);
-		glm::set(this->graphicsDefinition.Scale, 1.0f, 1.0f, 1.0f);
+		glm::set(this->graphicsDefinition.Position, 0.0f, 1.4f, 0.0f);
+		glm::set(this->graphicsDefinition.Scale, 2.0f, 5.0f, 2.0f);
+		glm::set(this->graphicsDefinition.Rotation, 2.0f, 1.0f, 1.0f);
 	}
 	cCannon::~cCannon()
 	{
@@ -26,7 +27,7 @@ namespace scene
 	{
 		loadingInfo.File = "../Assets/cylinder.obj";
 		loadingInfo.DoResize = true;
-		loadingInfo.Extents = glm::vec3(2.f, 2.f, 2.f);
+		loadingInfo.Extents = glm::vec3(2.f, 4.f, 2.f);
 		loadingInfo.SubMeshes[0].Name = meshName;
 	}
 	nGraphics::sGraphicsComponentDef cCannon::GetGraphicDefinition()

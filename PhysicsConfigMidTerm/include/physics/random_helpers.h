@@ -9,4 +9,5 @@ namespace nPhysics
 	glm::mat3 getRandomOrthonormalBasis();
 	glm::vec3 getRandomXVector();
 	glm::vec3 getRandomZVector();
+	glm::mat3 orthonormalBasisWithParams(const glm::vec3& xVec, const glm::vec3& zVec);
 }
