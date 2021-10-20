@@ -162,6 +162,15 @@
     <ClInclude Include="include\projectile\cEnergyProjectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\cProjectile2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\cProjectile3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\cProjectile4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\graphics\load\cImageFile.cpp">
@@ -276,6 +285,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\projectile\cEnergyProjectile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\cProjectile2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\cProjectile3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\cProjectile4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

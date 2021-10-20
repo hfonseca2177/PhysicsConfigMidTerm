@@ -6,15 +6,15 @@
 
 namespace scene
 {
-	//Graphics that represents the bullet projectile
-	class cProjectile
+	//Graphics that represents the laser projectile format
+	class cProjectile2
 	{
 	private:
 		nGraphics::sGraphic graphicAssets;
 		nGraphics::sGraphicsComponentDef graphicsDefinition;
 	public:
-		cProjectile();
-		virtual ~cProjectile();
+		cProjectile2();
+		virtual ~cProjectile2();
 
 		void AddLoadingInfo(nGraphics::sMeshLoadingInfo& loadingInfo);
 		nGraphics::sGraphicsComponentDef GetGraphicDefinition();

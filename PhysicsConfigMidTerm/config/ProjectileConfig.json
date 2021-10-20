@@ -46,8 +46,8 @@
 		"cannonBallPreset":
 		{
 			"mass": 7.0,
-			"damping": 0.2,
-			"size": 5.0,
+			"damping": 2.2,
+			"size": 6.0,
 			"timeLimit": 0.0,
 			"distanceLimit": 0.0,
 			"muzzleVelocity":

@@ -68,6 +68,9 @@
     <ClInclude Include="include\physics\particle_force_generators.h" />
     <ClInclude Include="include\physics\random_helpers.h" />
     <ClInclude Include="include\scene\cProjectile.h" />
+    <ClInclude Include="include\scene\cProjectile2.h" />
+    <ClInclude Include="include\scene\cProjectile3.h" />
+    <ClInclude Include="include\scene\cProjectile4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cannon\cCannonManager.cpp" />
@@ -108,6 +111,9 @@
     <ClCompile Include="src\physics\particle_force_generators.cpp" />
     <ClCompile Include="src\physics\random_helpers.cpp" />
     <ClCompile Include="src\scene\cProjectile.cpp" />
+    <ClCompile Include="src\scene\cProjectile2.cpp" />
+    <ClCompile Include="src\scene\cProjectile3.cpp" />
+    <ClCompile Include="src\scene\cProjectile4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config\CannonConfig.json" />

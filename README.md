@@ -1,25 +1,25 @@
-# PhysicsProject2
+# MidTerm exam
 
-INFO6019 - Physics and simulation - Project #2 - Particles
+Configuration and Physics Mid Term Exam
+
+Hugo do Carmo Fonseca
 
 Professor: James Lucas - Fanshawe college - London
 
 Description
 
-You are to create a physics simulation rendered with 3D graphics.  The simulation is of various fireworks able to be fired off into the sky by the user
+External configuration and Particles
 
 
-*Choosen Implementation*
 
-Shuriken's Firework
+Press 1, 2, 3, 4 for different projectiles  and arrows to move the cannon
 
-Press space for normal spawn, and 1, 2 or 3 after the event ends for a different behavior
-
-1) - Start from above with more Damping and ocillation
-2) - Vertically pack Launched to the face
-3) - Random acceleration causing shuffle in many directions
+1 - Bullet
+2 - Laser
+3 - Cannon ball
+4 - Energy
 
 
 Youtube short video
 
-https://youtu.be/JSgu_mnaVck
+https://www.youtube.com/watch?v=PozG9EhBM6c

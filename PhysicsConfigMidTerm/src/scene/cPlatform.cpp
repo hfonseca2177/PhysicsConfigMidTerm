@@ -38,6 +38,8 @@ namespace scene
 	}
 	void cPlatform::SendToTextureManager()
 	{
+		nGraphics::sGraphic whiteSquare = nGraphics::sGraphic("../Assets/WhiteSquare.bmp", "whiteSquare");
+		nGraphics::gTextureManager->LoadSimple(whiteSquare);
 		nGraphics::gTextureManager->LoadSimple(this->graphicAssets);
 	}
 }

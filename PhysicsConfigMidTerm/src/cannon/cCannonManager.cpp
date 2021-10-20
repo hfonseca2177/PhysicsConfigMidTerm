@@ -96,7 +96,7 @@ void  cannon::cCannonManager::ShootBall(glm::mat3& axes, nPhysics::cParticle* pa
 	glm::vec3 velocity = (axes[0] * preset.muzzleVelocity.x) + (axes[1] * preset.muzzleVelocity.y) + (axes[2] * preset.muzzleVelocity.z);
 	velocity *= glm::vec3(cannonVector.x, cannonVector.y, cannonVector.z);
 	velocity = glm::normalize(velocity);
-	velocity *= 40.f;
+	velocity *= 50.f;
 	//Set physic attributes
 	particle->SetPosition(position);
 	particle->SetVelocity(velocity);
@@ -140,8 +140,6 @@ nPhysics::cParticle* cannon::cCannonManager::SpawnProjectile()
 	{
 		std::cout << "INSTANCE ENERGY BALL" << std::endl;
 		nPhysics::cParticle* particle = new projectile::cEnergyProjectile(GetPreset(projectileType).mass, glm::vec3(0.f));
-		particle->SetVelocity(GetPreset(projectileType).muzzleVelocity);
-		particle->SetDamping(GetPreset(projectileType).damping);
 		return particle;
 		break;
 	}
@@ -149,8 +147,6 @@ nPhysics::cParticle* cannon::cCannonManager::SpawnProjectile()
 	{
 		std::cout << "INSTANCE LASER" << std::endl;
 		nPhysics::cParticle* particle = new projectile::cLaserProjectile(GetPreset(projectileType).mass, glm::vec3(0.f));
-		particle->SetVelocity(GetPreset(projectileType).muzzleVelocity);
-		particle->SetDamping(GetPreset(projectileType).damping);
 		return particle;
 		break;
 	}
@@ -158,16 +154,12 @@ nPhysics::cParticle* cannon::cCannonManager::SpawnProjectile()
 	{
 		std::cout << "INSTANCE CANNON BALL" << std::endl;
 		nPhysics::cParticle* particle = new projectile::cBallProjectile(GetPreset(projectileType).mass, glm::vec3(0.f));
-		particle->SetVelocity(GetPreset(projectileType).muzzleVelocity);
-		particle->SetDamping(GetPreset(projectileType).damping);
 		return particle;
 		break;
 	}
 	default:
 		std::cout << "INSTANCE BULLET" << std::endl;
 		nPhysics::cParticle* particle = new projectile::cBulletProjectile(GetPreset(projectileType).mass, glm::vec3(0.f));
-		particle->SetVelocity(GetPreset(projectileType).muzzleVelocity);
-		particle->SetDamping(GetPreset(projectileType).damping);
 		return particle;
 		break;
 	}
@@ -197,14 +189,28 @@ void cannon::cCannonManager::ApplyVisual(nGraphics::cGraphicsComponent* graphic)
 	graphic->GetVars()->ModelColor.r = preset.color.r;
 	graphic->GetVars()->ModelColor.g = preset.color.g;
 	graphic->GetVars()->ModelColor.b = preset.color.b;
-	//mesh/texture
-	if (preset.textureName != "")
-	{
-		graphic->GetVars()->TexDiffuse = nGraphics::gTextureManager->GetTextureByName(preset.textureName);
-	}
+
 	//scale
 	if (preset.size > 1)
 	{
 		graphic->GetVars()->ModelMatrix = glm::scale(graphic->GetVars()->ModelMatrix, glm::vec3(preset.size, preset.size, preset.size));
 	}
 }
+
+bool cannon::cCannonManager::IsEnergyBall()
+{
+	return this->projectileType == ENERGY;
+}
+bool cannon::cCannonManager::IsBullet()
+{
+	return this->projectileType == BULLET;
+}
+bool cannon::cCannonManager::IsBall()
+{
+	return this->projectileType == BALL;
+}
+bool cannon::cCannonManager::IsLaser()
+{
+	return this->projectileType == LASER;
+}
+

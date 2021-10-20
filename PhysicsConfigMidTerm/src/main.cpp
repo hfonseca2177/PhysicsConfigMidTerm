@@ -10,6 +10,9 @@
 #include <scene/cPlatform.h>
 #include <scene/cCannon.h>
 #include <scene/cProjectile.h>
+#include <scene/cProjectile2.h>
+#include <scene/cProjectile3.h>
+#include <scene/cProjectile4.h>
 #include <config/cConfigurationManager.h>
 #include <cannon/cCannonManager.h>
 
@@ -53,7 +56,11 @@ nGraphics::c3rdPersonCamera* camera = 0;
 nGraphics::cGraphicsComponent* skyboxGraphics;
 nGraphics::cGraphicsComponent* platformGraphics;
 nGraphics::cGraphicsComponent* cannonGraphics;
-nGraphics::cGraphicsComponent* projectilesGraphics;
+
+nGraphics::cGraphicsComponent* projBulletGraphics;
+nGraphics::cGraphicsComponent* projLaserGraphics;
+nGraphics::cGraphicsComponent* projBallGraphics;
+nGraphics::cGraphicsComponent* projEnergyGraphics;
 
 config::cConfigurationManager* configManager;
 
@@ -81,18 +88,30 @@ int main()
 	configManager->LoadConfiguration();
 
 
-	//Instantiate all Shuriken's launch platform scenario graphics component
+	//Instantiate all scenario graphics components
 	scene::cClearSky clearSky = scene::cClearSky();
 	scene::cPlatform platform = scene::cPlatform();
 	scene::cCannon cannon = scene::cCannon();
-	scene::cProjectile projectile = scene::cProjectile();
+	
+
+	scene::cProjectile projBullet = scene::cProjectile();
+	
+	scene::cProjectile2 projLaser = scene::cProjectile2();
+	
+	scene::cProjectile3 projBall = scene::cProjectile3();
+	
+	scene::cProjectile4 projEnergy = scene::cProjectile4();
 	
 	
 	// Loading textures to use with our meshes
 	clearSky.SendToTextureManager();
 	platform.SendToTextureManager();
 	cannon.SendToTextureManager();
-	projectile.SendToTextureManager();
+	
+	projBullet.SendToTextureManager();
+	projLaser.SendToTextureManager();
+	projBall.SendToTextureManager();
+	projEnergy.SendToTextureManager();
 
 	// Loading meshes
 	std::vector<nGraphics::sMeshLoadingInfo> infos;
@@ -106,8 +125,17 @@ int main()
 
 	cannon.AddLoadingInfo(loadingInfo);
 	infos.push_back(loadingInfo);
+		
+	projBullet.AddLoadingInfo(loadingInfo);
+	infos.push_back(loadingInfo);
 
-	projectile.AddLoadingInfo(loadingInfo);
+	projLaser.AddLoadingInfo(loadingInfo);
+	infos.push_back(loadingInfo);
+
+	projBall.AddLoadingInfo(loadingInfo);
+	infos.push_back(loadingInfo);
+
+	projEnergy.AddLoadingInfo(loadingInfo);
 	infos.push_back(loadingInfo);
 
 	if (!nGraphics::gMeshManager->Load(infos))
@@ -121,7 +149,12 @@ int main()
 	skyboxGraphics = new nGraphics::cGraphicsComponent(clearSky.GetGraphicDefinition());
 	platformGraphics = new nGraphics::cGraphicsComponent(platform.GetGraphicDefinition());
 	cannonGraphics = new nGraphics::cGraphicsComponent(cannon.GetGraphicDefinition());
-	projectilesGraphics = new nGraphics::cGraphicsComponent(projectile.GetGraphicDefinition());
+	
+	projBulletGraphics = new nGraphics::cGraphicsComponent(projBullet.GetGraphicDefinition());;
+	projLaserGraphics = new nGraphics::cGraphicsComponent(projLaser.GetGraphicDefinition());;
+	projBallGraphics = new nGraphics::cGraphicsComponent(projBall.GetGraphicDefinition());;
+	projEnergyGraphics = new nGraphics::cGraphicsComponent(projEnergy.GetGraphicDefinition());;
+
 
 	// Enter the main loop
 	mainLoop();
@@ -129,9 +162,14 @@ int main()
 	// Clean up
 	delete platformGraphics;
 	delete cannonGraphics;
-	delete projectilesGraphics;
 	delete skyboxGraphics;
 	delete camera;
+
+
+	delete projBulletGraphics;
+	delete projLaserGraphics;
+	delete projBallGraphics;
+	delete projEnergyGraphics;
 
 	nGraphics::Shutdown();
 
@@ -140,10 +178,9 @@ int main()
 }
 
 //Default particle Setup
-void InitProject1Variables(glm::mat3& axes, nPhysics::cParticle* particle)
+void InitDefaultParticle(glm::mat3& axes, nPhysics::cParticle* particle)
 {
 	axes = orthonormalBasis(getRandomXVector(), getRandomZVector());
-	// because our "sphere" has a radius of 1
 	glm::vec3 position(0.0, 1.1f, 0.0);
 	glm::vec3 velocity = (axes[0] * getRandom(-2.f, 2.f)) + (axes[1] * 5.f) + (axes[2] * getRandom(-2.f, 2.f));
 	velocity = glm::normalize(velocity);
@@ -161,11 +198,10 @@ void InitWorld(std::vector<nPhysics::cParticle*>& particles, nPhysics::cParticle
 	{
 		nPhysics::cParticle* particle = cannonManager.SpawnProjectile();
 
-		if (world->AddParticle(particle))
-		{
-			std::cout << "Hurray!" << std::endl;
-		}
+		world->AddParticle(particle);
+		
 		world->GetForceRegistry()->Register(particle, &gravityGenerator);
+
 		particles.push_back(particle);
 	}
 }
@@ -189,6 +225,8 @@ void mainLoop()
 
 	nGraphics::Focus();
 
+	nGraphics::SetWindowTitle("Projectile Cannon");
+
 	bool continueMainLoop = true;
 
 	float previousTime = static_cast<float>(glfwGetTime());
@@ -196,13 +234,14 @@ void mainLoop()
 	float fpsFrameCount = 0.f;
 	float fpsTimeElapsed = 0.f;
 
-	// BEGIN PROJECT 1 SETUP
+	//Instantiate managers
 	nPhysics::cParticleWorld* world = new nPhysics::cParticleWorld();
-
-	//Shuriken fireworks manager instance
 	cannon::cCannonManager cannonManager = cannon::cCannonManager(configManager->GetCannonConfiguration(), configManager->GetProjectileConfiguration());
+
+	//Default projectile
 	cannonManager.SetProjectileType(cannon::BULLET);
 
+	//Instantiate basic loop variables
 	nPhysics::cParticleGravityGenerator gravityGenerator(glm::vec3(0.0f, -9.81f, 0.0f));
 
 	std::vector<nPhysics::cParticle*> particles;
@@ -212,7 +251,6 @@ void mainLoop()
 	nPhysics::cParticle* particle = particles[0];
 
 	glm::vec3 initialPosition = glm::vec3(0.0f);
-	//nPhysics::cParticle* projectile = new nPhysics::cParticle(1.0f, initialPosition);
 	
 	glm::mat3 axes;
 
@@ -223,7 +261,7 @@ void mainLoop()
 	//Default particles settings
 	for (nPhysics::cParticle* p : particles)
 	{
-		InitProject1Variables(axes, p);
+		InitDefaultParticle(axes, p);
 	}
 
 	//cannon controls
@@ -240,32 +278,18 @@ void mainLoop()
 	
 	bool particlesChanged = false;
 
-	//Cannon Vector
+	//Cannon Vector extracted from  identity matrix to know where the cannon is poiting 
 	glm::mat4 currentCannonMatrix = glm::translate(cannonGraphics->GetVars()->ModelMatrix, glm::vec3(1.f));
 
 	glm::vec4 cannonVector = currentCannonMatrix * glm::vec4(1.f);
+
+	
 
 	while (continueMainLoop)
 	{
 		float currentTime = static_cast<float>(glfwGetTime());
 		float deltaTime = currentTime - previousTime;
 		previousTime = currentTime;
-
-		// FPS TITLE STUFF
-		{
-			fpsTimeElapsed += deltaTime;
-			fpsFrameCount += 1.0f;
-			if (fpsTimeElapsed >= 0.03f)
-			{
-				std::string fps = std::to_string(fpsFrameCount / fpsTimeElapsed);
-				std::string ms = std::to_string(1000.f * fpsTimeElapsed / fpsFrameCount);
-				std::string newTitle = "FPS: " + fps + "   MS: " + ms;
-				nGraphics::SetWindowTitle(newTitle);
-				// reset times and counts
-				fpsTimeElapsed = 0.f;
-				fpsFrameCount = 0.f;
-			}
-		}
 
 		if(downKey->IsJustPressed())
 		{
@@ -293,7 +317,6 @@ void mainLoop()
 		
 		cannonVector = currentCannonMatrix * glm::vec4(1.f);
 
-		//std::cout << "Cannon Vector :  x=" << cannonVector.x << "\ty=" << cannonVector.y << "\tz=" << cannonVector.z << std::endl;
 		
 		// Continue the simulation so long as the particle is above the ground.
 		if (!projectileIsAlive)
@@ -347,7 +370,7 @@ void mainLoop()
 				}
 				projectileIsAlive = true;
 			}
-			//Replace normal particles for the Shuriken Zeta ones
+			//Fire energy ball
 			else if (fourKey->IsJustPressed()) {
 				std::cout << "THREE PRESSED - ENERGY BALL" << std::endl;
 				cannonManager.SetProjectileType(cannon::ENERGY);
@@ -388,11 +411,9 @@ void mainLoop()
 					// Let the user know the particle is moving down.
 					std::cout << "going down! \tx=" << position.x << "\ty=" << position.y << "\tz=" << position.z << std::endl;
 				}
-				
-				world->TimeStep(deltaTime);
+
 				// Step the simulation forward
-				//doTimeStepEuler(axes, deltaTime, timeElapsed, position, velocity, acceleration);
-				//doTimeStepMidpoint(axes, deltaTime, timeElapsed, position, velocity, acceleration);
+				world->TimeStep(deltaTime);
 			}
 			else
 			{
@@ -425,17 +446,34 @@ void mainLoop()
 		skyboxGraphics->Render();
 		platformGraphics->Render();
 		cannonGraphics->Render();
-		// render the projectile
 
+		// render the current projectile
 		for (nPhysics::cParticle* p : particles)
 		{
 			p->GetPosition(position);
-			projectilesGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
-
-			//projectilesGraphics->GetVars()->ModelMatrix = glm::scale(projectilesGraphics->GetVars()->ModelMatrix, glm::vec3(3.0f, 3.0f, 3.0f));
-			//projectilesGraphics->GetVars()->TexDiffuse = nGraphics::gTextureManager->GetTextureByName("box");
-			cannonManager.ApplyVisual(projectilesGraphics);
-			projectilesGraphics->Render();
+			
+			if (cannonManager.IsBullet())
+			{
+				projBulletGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
+				cannonManager.ApplyVisual(projBulletGraphics);
+				projBulletGraphics->Render();
+			}else if (cannonManager.IsLaser())
+			{
+				projLaserGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
+				cannonManager.ApplyVisual(projLaserGraphics);
+				projLaserGraphics->Render();
+			}else if (cannonManager.IsBall())
+			{
+				projBallGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
+				cannonManager.ApplyVisual(projBallGraphics);
+				projBallGraphics->Render();
+			}else if (cannonManager.IsEnergyBall())
+			{
+				projEnergyGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
+				cannonManager.ApplyVisual(projEnergyGraphics);
+				projEnergyGraphics->Render();
+			}
+			
 		}
 
 		// end per-item rendering
