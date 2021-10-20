@@ -227,10 +227,10 @@ void mainLoop()
 	}
 
 	//cannon controls
-	nInput::cKey* oneLeft = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_LEFT);
-	nInput::cKey* twoRight = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_RIGHT);
-	nInput::cKey* threeUp = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_UP);
-	nInput::cKey* threeDown = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_DOWN);
+	nInput::cKey* leftKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_LEFT);
+	nInput::cKey* rightKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_RIGHT);
+	nInput::cKey* upKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_UP);
+	nInput::cKey* downKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_DOWN);
 	
 	//Listener for the keys 1 2 3 4 respectively for each projectile type
 	nInput::cKey* oneKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_1);
@@ -239,6 +239,11 @@ void mainLoop()
 	nInput::cKey* fourKey = nInput::cInputManager::GetInstance()->ListenToKey(nInput::KeyCode::KEY_4);
 	
 	bool particlesChanged = false;
+
+	//Cannon Vector
+	glm::mat4 currentCannonMatrix = glm::translate(cannonGraphics->GetVars()->ModelMatrix, glm::vec3(1.f));
+
+	glm::vec4 cannonVector = currentCannonMatrix * glm::vec4(1.f);
 
 	while (continueMainLoop)
 	{
@@ -261,7 +266,34 @@ void mainLoop()
 				fpsFrameCount = 0.f;
 			}
 		}
+
+		if(downKey->IsJustPressed())
+		{
+			//rotation positive x axis
+			cannonGraphics->GetVars()->ModelMatrix =  glm::rotate(cannonGraphics->GetVars()->ModelMatrix, glm::radians(3.14f), glm::vec3(1, 0, 0));//rotation x = 0.0 degrees
+		}
+		else if (upKey->IsJustPressed())
+		{
+			//rotation nagative x axis  
+			cannonGraphics->GetVars()->ModelMatrix = glm::rotate(cannonGraphics->GetVars()->ModelMatrix, glm::radians(-3.14f), glm::vec3(1, 0, 0));//rotation x = 0.0 degrees
+		}
+		else if (leftKey->IsJustPressed())
+		{
+			//rotation positive z axis  
+			cannonGraphics->GetVars()->ModelMatrix = glm::rotate(cannonGraphics->GetVars()->ModelMatrix, glm::radians(3.14f), glm::vec3(0, 0, 1));
+		}
+		else if (rightKey->IsJustPressed())
+		{
+			//rotation negative z axis  
+			cannonGraphics->GetVars()->ModelMatrix = glm::rotate(cannonGraphics->GetVars()->ModelMatrix, glm::radians(-3.14f), glm::vec3(0, 0, 1));
+		}
 		
+		//Extract the cannon Direction Vector from its ModelMatrix
+		currentCannonMatrix = glm::translate(cannonGraphics->GetVars()->ModelMatrix, glm::vec3(1.f));
+		
+		cannonVector = currentCannonMatrix * glm::vec4(1.f);
+
+		//std::cout << "Cannon Vector :  x=" << cannonVector.x << "\ty=" << cannonVector.y << "\tz=" << cannonVector.z << std::endl;
 		
 		// Continue the simulation so long as the particle is above the ground.
 		if (!projectileIsAlive)
@@ -282,7 +314,7 @@ void mainLoop()
 				}
 				for (nPhysics::cParticle* p : particles)
 				{
-					cannonManager.ShootBullet(axes, p);
+					cannonManager.ShootBullet(axes, p, cannonVector);
 				}
 				projectileIsAlive = true;
 			}
@@ -297,7 +329,7 @@ void mainLoop()
 				particle = particles[0];
 				for (nPhysics::cParticle* p : particles)
 				{
-					cannonManager.ShootLaser(axes, p);
+					cannonManager.ShootLaser(axes, p, cannonVector);
 				}
 				projectileIsAlive = true;
 			}
@@ -311,7 +343,7 @@ void mainLoop()
 				particle = particles[0];
 				for (nPhysics::cParticle* p : particles)
 				{
-					cannonManager.ShootBall(axes, p);
+					cannonManager.ShootBall(axes, p, cannonVector);
 				}
 				projectileIsAlive = true;
 			}
@@ -324,7 +356,7 @@ void mainLoop()
 				particle = particles[0];
 				for (nPhysics::cParticle* p : particles)
 				{
-					cannonManager.ShootEnergy(axes, p);
+					cannonManager.ShootEnergy(axes, p, cannonVector);
 				}
 				projectileIsAlive = true;
 			}
@@ -399,6 +431,7 @@ void mainLoop()
 		{
 			p->GetPosition(position);
 			projectilesGraphics->GetVars()->ModelMatrix = glm::translate(glm::mat4(1.0f), position);
+
 			//projectilesGraphics->GetVars()->ModelMatrix = glm::scale(projectilesGraphics->GetVars()->ModelMatrix, glm::vec3(3.0f, 3.0f, 3.0f));
 			//projectilesGraphics->GetVars()->TexDiffuse = nGraphics::gTextureManager->GetTextureByName("box");
 			cannonManager.ApplyVisual(projectilesGraphics);

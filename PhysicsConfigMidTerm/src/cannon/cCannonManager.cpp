@@ -43,7 +43,7 @@ cannon::cCannonManager::~cCannonManager()
 {
 }
 
-void cannon::cCannonManager::ShootBullet(glm::mat3& axes, nPhysics::cParticle* particle)
+void cannon::cCannonManager::ShootBullet(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector)
 {
 	config::sProjectilePreset preset = GetPreset(projectileType);
 	//Standard axes
@@ -54,27 +54,8 @@ void cannon::cCannonManager::ShootBullet(glm::mat3& axes, nPhysics::cParticle* p
 	glm::vec3 position(0.0, 1.1, 0.0);
 	//Apply muzzelVelocity
 	glm::vec3 velocity = (axes[0] * preset.muzzleVelocity.x) + (axes[1] * preset.muzzleVelocity.y) + (axes[2] * preset.muzzleVelocity.z);
-	velocity = glm::normalize(velocity);
-	velocity *= 40.f;
-	//Set physic attributes
-	particle->SetPosition(position);
-	particle->SetVelocity(velocity);
-	particle->SetDamping(preset.damping);
-
-}
-
-void  cannon::cCannonManager::ShootLaser(glm::mat3& axes, nPhysics::cParticle* particle)
-{
-	config::sProjectilePreset preset = GetPreset(projectileType);
-	//Standard axes
-	glm::vec3 vecX(1.0, 0.0, 1.0);
-	glm::vec3 vecZ(-1.0, 0.0, 1.0);
-	axes = nPhysics::orthonormalBasisWithParams(vecX, vecZ);
-	//Standard position
-	glm::vec3 position(0.0, 1.1, 0.0);
-	//Apply muzzelVelocity
-	glm::vec3 velocity = (axes[0] * preset.muzzleVelocity.x) + (axes[1] * preset.muzzleVelocity.y) + (axes[2] * preset.muzzleVelocity.z);
-	velocity = glm::normalize(velocity);
+	velocity *= glm::vec3(cannonVector.x, cannonVector.y, cannonVector.z);
+	velocity = glm::normalize(velocity);	
 	velocity *= 40.f;
 	//Set physic attributes
 	particle->SetPosition(position);
@@ -82,7 +63,7 @@ void  cannon::cCannonManager::ShootLaser(glm::mat3& axes, nPhysics::cParticle* p
 	particle->SetDamping(preset.damping);
 }
 
-void  cannon::cCannonManager::ShootBall(glm::mat3& axes, nPhysics::cParticle* particle)
+void  cannon::cCannonManager::ShootLaser(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector)
 {
 	config::sProjectilePreset preset = GetPreset(projectileType);
 	//Standard axes
@@ -93,6 +74,7 @@ void  cannon::cCannonManager::ShootBall(glm::mat3& axes, nPhysics::cParticle* pa
 	glm::vec3 position(0.0, 1.1, 0.0);
 	//Apply muzzelVelocity
 	glm::vec3 velocity = (axes[0] * preset.muzzleVelocity.x) + (axes[1] * preset.muzzleVelocity.y) + (axes[2] * preset.muzzleVelocity.z);
+	velocity *= glm::vec3(cannonVector.x, cannonVector.y, cannonVector.z);
 	velocity = glm::normalize(velocity);
 	velocity *= 40.f;
 	//Set physic attributes
@@ -101,7 +83,7 @@ void  cannon::cCannonManager::ShootBall(glm::mat3& axes, nPhysics::cParticle* pa
 	particle->SetDamping(preset.damping);
 }
 
-void  cannon::cCannonManager::ShootEnergy(glm::mat3& axes, nPhysics::cParticle* particle)
+void  cannon::cCannonManager::ShootBall(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector)
 {
 	config::sProjectilePreset preset = GetPreset(projectileType);
 	//Standard axes
@@ -112,6 +94,27 @@ void  cannon::cCannonManager::ShootEnergy(glm::mat3& axes, nPhysics::cParticle* 
 	glm::vec3 position(0.0, 1.1, 0.0);
 	//Apply muzzelVelocity
 	glm::vec3 velocity = (axes[0] * preset.muzzleVelocity.x) + (axes[1] * preset.muzzleVelocity.y) + (axes[2] * preset.muzzleVelocity.z);
+	velocity *= glm::vec3(cannonVector.x, cannonVector.y, cannonVector.z);
+	velocity = glm::normalize(velocity);
+	velocity *= 40.f;
+	//Set physic attributes
+	particle->SetPosition(position);
+	particle->SetVelocity(velocity);
+	particle->SetDamping(preset.damping);
+}
+
+void  cannon::cCannonManager::ShootEnergy(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector)
+{
+	config::sProjectilePreset preset = GetPreset(projectileType);
+	//Standard axes
+	glm::vec3 vecX(1.0, 0.0, 1.0);
+	glm::vec3 vecZ(-1.0, 0.0, 1.0);
+	axes = nPhysics::orthonormalBasisWithParams(vecX, vecZ);
+	//Standard position
+	glm::vec3 position(0.0, 1.1, 0.0);
+	//Apply muzzelVelocity
+	glm::vec3 velocity = (axes[0] * preset.muzzleVelocity.x) + (axes[1] * preset.muzzleVelocity.y) + (axes[2] * preset.muzzleVelocity.z);
+	velocity *= glm::vec3(cannonVector.x, cannonVector.y, cannonVector.z);
 	velocity = glm::normalize(velocity);
 	velocity *= 40.f;
 	//Set physic attributes

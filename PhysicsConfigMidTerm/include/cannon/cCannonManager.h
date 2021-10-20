@@ -21,10 +21,10 @@ namespace cannon
 		cCannonManager(config::sCannonConfiguration cannonConfig, config::sProjectileConfiguration projectileConfig);
 		virtual ~cCannonManager();
 		
-		void ShootBullet(glm::mat3& axes, nPhysics::cParticle* particle);
-		void ShootLaser(glm::mat3& axes, nPhysics::cParticle* particle);
-		void ShootBall(glm::mat3& axes, nPhysics::cParticle* particle);
-		void ShootEnergy(glm::mat3& axes, nPhysics::cParticle* particle);
+		void ShootBullet(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector);
+		void ShootLaser(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector);
+		void ShootBall(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector);
+		void ShootEnergy(glm::mat3& axes, nPhysics::cParticle* particle, glm::vec4& cannonVector);
 		void SetProjectileType(eProjectileType  type);
 		nPhysics::cParticle* SpawnProjectile();
 		virtual bool ReachedTimeout(float& timeElapsed, nPhysics::cParticle* particle);
